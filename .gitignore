@@ -105,6 +105,7 @@ venv.bak/
 
 # pyrogram stuff
 *.session
+downloads/
 
 # vscode things
 .vscode/
