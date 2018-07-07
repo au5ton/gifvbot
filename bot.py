@@ -31,15 +31,20 @@ def on_document(client, message):
         os.rename(download_path, download_path+".gif") # pyrogram doesnt add extension, so we must
         convert_script = os.path.join(PROJECT_DIRECTORY, "gif2mp4.sh")
         print("converting gif")
-        subprocess.run([convert_script, download_path+".gif", download_path+".mp4"])
-        print("done converting")
-        print("sending video")
-        client.send_video(message.chat.id, download_path+".mp4", reply_to_message_id=message.message_id)
-        print("video sent!")
-        print("cleaning up")
-        os.remove(download_path+".gif")
-        os.remove(download_path+".mp4")
-        print("all cleaned up")
+        status = subprocess.run([convert_script, download_path+".gif", download_path+".mp4"])
+        print(Fore.YELLOW+"STATUS: "+str(status)+Fore.RESET)
+        if status.returncode is 0:
+            print("done converting")
+            print("sending video")
+            client.send_video(message.chat.id, download_path+".mp4", reply_to_message_id=message.message_id)
+            print("video sent!")
+            print("cleaning up")
+            os.remove(download_path+".gif")
+            os.remove(download_path+".mp4")
+            print("all cleaned up")
+        else:
+            print("error when converting")
+        # TODO: if error occurs when converting, fail gracefully
 
 # When a message is sent in a private message
 def on_message(client, message):

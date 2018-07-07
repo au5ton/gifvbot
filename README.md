@@ -26,6 +26,7 @@ See [demo video](https://www.youtube.com/watch?v=x7euHeqo64s).
 - Supply API ID and API Hash that was provided when registering your Telegram application by editing the `.env` file
 - Run the python script: `python3 bot.py`
 - Follow instructions to sign into a Telegram user account
+- The bot is now running
 
 ## What is a userbot?
 Although rare, a Telegram userbot is a type of Telegram bot that does not run from a Telegram bot account, but from a full user account. Telegram userbots are fully-fledged Telegram accounts. The only reason a Telegram bot would be made to be a userbot instead of a normal bot created by the BotFather is because of API limitations. 
