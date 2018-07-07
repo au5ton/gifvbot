@@ -66,7 +66,10 @@ else:
     print("Won\'t be able to execute gif2mp4.sh. Try: chmod u+x gif2mp4.sh")
     raise Exception(Fore.RED + "gif2mp4.sh cannot be executed, change the file permissions" + Style.RESET_ALL)
 print("\tDeleting contents of `downloads` directory")
-shutil.rmtree(os.path.join(PROJECT_DIRECTORY, "downloads"))
+if os.path.isdir(os.path.join(PROJECT_DIRECTORY, "downloads")) is True:
+    shutil.rmtree(os.path.join(PROJECT_DIRECTORY, "downloads"))
+elif os.path.exists(os.path.join(PROJECT_DIRECTORY, "downloads")):
+    os.remove(os.path.join(PROJECT_DIRECTORY, "downloads"))
 os.makedirs(os.path.join(PROJECT_DIRECTORY, "downloads"))
 print("\tCleaned `downloads` directory")
 
