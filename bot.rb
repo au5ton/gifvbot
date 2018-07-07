@@ -2,8 +2,9 @@ require 'telegram/bot'
 require 'dotenv'
 Dotenv.load('.env')
 
-FILE_SIZE_MINIMUM = 1 * (10**7) # 10 megabytes
-FILE_SIZE_MAXIMUM = 1 * (10**8) # 100 megabytes
+FILE_SIZE_MINIMUM = 1 * (10**7) # 1 megabytes
+#FILE_SIZE_MAXIMUM = 1 * (10**8) # 100 megabytes
+FILE_SIZE_MAXIMUM = 2 * (10**7) # 20 megabytes
 
 def in_range(size)
     if size < FILE_SIZE_MAXIMUM && size > FILE_SIZE_MINIMUM
@@ -38,8 +39,7 @@ Telegram::Bot::Client.run(ENV['TELEGRAM_BOT_TOKEN']) do |bot|
 
         if message.document.instance_of? Telegram::Bot::Types::Document
             puts "mime: #{message.document.mime_type}, size: #{message.document.file_size}"
-            if message.document.mime_type == "image/gif"
-                puts "we gotta gif"
+            if message.document.mime_type == "image/gif" && message.document.file_size > FILE_SIZE_MINIMUM && message.document.file_size < FILE_SIZE_MAXIMUM
                 puts bot.api.get_file({"file_id" => message.document.file_id}) # doesn't account for ResponseErrors
             end
         else
