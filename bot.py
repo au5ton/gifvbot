@@ -22,29 +22,26 @@ app = Client(
 
 # When a document is sent
 def on_document(client, message):
-    #print(client)
-    #print(message)
+    # if the document is a gif and is within an acceptable size
     if message.document.mime_type == "image/gif" and message.document.file_size in range(FILE_SIZE_MINIMUM,FILE_SIZE_MAXIMUM):
-        print("Downloading gif...")
+        # download the document
         download_path = client.download_media(message, message.document.file_id)
-        print("download done: " + download_path)
-        os.rename(download_path, download_path+".gif") # pyrogram doesnt add extension, so we must
+         # pyrogram doesnt add extension, so we must
+        os.rename(download_path, download_path+".gif")
+        # create the path to the conversion script
         convert_script = os.path.join(PROJECT_DIRECTORY, "gif2mp4.sh")
-        print("converting gif")
+        # run the conversion script
         status = subprocess.run([convert_script, download_path+".gif", download_path+".mp4"])
-        print(Fore.YELLOW+"STATUS: "+str(status)+Fore.RESET)
+        # if the conversion failed or not
         if status.returncode is 0:
-            print("done converting")
-            print("sending video")
+            # send the newly created mp4
             client.send_video(message.chat.id, download_path+".mp4", reply_to_message_id=message.message_id)
-            print("video sent!")
-            print("cleaning up")
+            # delete downloaded/generated files after
             os.remove(download_path+".gif")
             os.remove(download_path+".mp4")
-            print("all cleaned up")
         else:
-            print("error when converting")
-        # TODO: if error occurs when converting, fail gracefully
+            #print("error when converting")
+            os.remove(download_path+".gif")
 
 # When a message is sent in a private message
 def on_message(client, message):
@@ -73,7 +70,7 @@ shutil.rmtree(os.path.join(PROJECT_DIRECTORY, "downloads"))
 os.makedirs(os.path.join(PROJECT_DIRECTORY, "downloads"))
 print("\tCleaned `downloads` directory")
 
-# if the code has made it here, everything has gone ok
+# if the code has made it here, startup checks have gone ok
 print(Fore.GREEN + "Startup checks complete!" + Style.RESET_ALL)
 app.add_handler(MessageHandler(on_document, Filters.document))
 app.add_handler(MessageHandler(on_message, Filters.private))

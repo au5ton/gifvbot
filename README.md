@@ -15,7 +15,7 @@ See [demo video](https://www.youtube.com/watch?v=x7euHeqo64s).
 - Python 3.5+
 - FFmpeg installed and in PATH
 - Linux/macOS environment
-- A Telegram user account (this is a Userbot)
+- A Telegram user account (can be separate from your primary account)
 
 ## Running an instance
 - `git clone https://github.com/au5ton/gifvbot.git`
