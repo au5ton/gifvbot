@@ -42,7 +42,9 @@ def on_document(client, message):
 
 
 def on_message(client, message):
-    message.reply("Hello {}".format(message.from_user.first_name))
+    # bot commands
+    if message.text.startswith("/start"):
+        message.reply("Hello! I automatically convert large gif files to a silent mp4. Simply send your gif file as an attached document and I will reply with a watchable mp4. I work in group chats too.")
 
 print(Fore.YELLOW + "Performing startup checks" + Style.RESET_ALL)
 print("\tChecking for ffmpeg in PATH...")
