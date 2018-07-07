@@ -9,4 +9,3 @@ def hello(client, message):
 
 
 app.run()
-helloworld() 
