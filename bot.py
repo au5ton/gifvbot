@@ -20,6 +20,7 @@ app = Client(
     api_hash=os.getenv("MTPROTO_API_HASH")
 )
 
+# When a document is sent
 def on_document(client, message):
     #print(client)
     #print(message)
@@ -40,12 +41,15 @@ def on_document(client, message):
         os.remove(download_path+".mp4")
         print("all cleaned up")
 
-
+# When a message is sent in a private message
 def on_message(client, message):
     # bot commands
     if message.text.startswith("/start"):
         message.reply("Hello! I automatically convert large gif files to a silent mp4. Simply send your gif file as an attached document and I will reply with a watchable mp4. I work in group chats too.")
+        message.reply("I\'m also open source! https://github.com/au5ton/gifvbot")
 
+
+# Startup checks
 print(Fore.YELLOW + "Performing startup checks" + Style.RESET_ALL)
 print("\tChecking for ffmpeg in PATH...")
 if shutil.which("ffmpeg") is not None:
