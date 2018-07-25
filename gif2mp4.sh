@@ -14,5 +14,5 @@ if [ -z "$2" ]; then {
 fi;
 
 # Edit this script to, for example, send smaller gifs to save bandwidth or CPU cycles
-# ffmpeg -i $1 -movflags faststart -pix_fmt yuv420p -vf "scale=trunc(iw/2)*2:trunc(ih/2)*2" $2
-ffmpeg -y -i $1 -movflags faststart -pix_fmt yuv420p $2 > /dev/null 2>&1
+ffmpeg -y -i $1 -movflags faststart -pix_fmt yuv420p -vf "scale=trunc(iw/2)*2:trunc(ih/2)*2" $2 > /dev/null 2>&1
+#ffmpeg -y -i $1 -movflags faststart -pix_fmt yuv420p $2 > /dev/null 2>&1
