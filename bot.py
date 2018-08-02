@@ -11,7 +11,7 @@ colorama.init()
 
 PROJECT_DIRECTORY = os.path.split(os.path.realpath(__file__))[0]
 FILE_SIZE_MINIMUM = 1 * (10**7) # 1 megabytes
-FILE_SIZE_MAXIMUM = 2 * (10**8) # 200 megabytes
+FILE_SIZE_MAXIMUM = 5 * (10**8) # 500 megabytes
 #FILE_SIZE_MAXIMUM = 2 * (10**7) # 20 megabytes
 
 app = Client(
