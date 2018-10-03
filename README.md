@@ -1,3 +1,5 @@
+[![codebeat badge](https://codebeat.co/badges/679d47b4-a076-41d4-8c25-e67d9e9775cd)](https://codebeat.co/projects/github-com-au5ton-gifvbot-master)
+
 # gifvbot
 Automatically converts large-ish .gif files sent in Telegram to a silent .mp4
 
