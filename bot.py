@@ -44,7 +44,7 @@ def on_document(client, message):
             os.remove(download_path+".gif")
 
     # if the document is a webm and is within an acceptable size
-    if message.document.file_name.lower().endswith(".webm") and message.document.file_size in range(1,FILE_SIZE_MAXIMUM):
+    if (message.document.file_name.lower().endswith(".webm") or message.document.file_name.lower().endswith(".mkv")) and message.document.file_size in range(1,FILE_SIZE_MAXIMUM):
         # download the document
         download_path = client.download_media(message, message.document.file_id)
          # pyrogram doesnt add extension, so we must
