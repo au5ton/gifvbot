@@ -43,6 +43,27 @@ def on_document(client, message):
             #print("error when converting")
             os.remove(download_path+".gif")
 
+    # if the document is a webm and is within an acceptable size
+    if message.document.file_name.lower().endswith(".webm") and message.document.file_size in range(1,FILE_SIZE_MAXIMUM):
+        # download the document
+        download_path = client.download_media(message, message.document.file_id)
+         # pyrogram doesnt add extension, so we must
+        os.rename(download_path, download_path+".webm")
+        # create the path to the conversion script
+        convert_script = os.path.join(PROJECT_DIRECTORY, "webm2mp4.sh")
+        # run the conversion script
+        status = subprocess.run([convert_script, download_path+".webm", download_path+".mp4"])
+        # if the conversion failed or not
+        if status.returncode is 0:
+            # send the newly created mp4
+            client.send_video(message.chat.id, download_path+".mp4", reply_to_message_id=message.message_id)
+            # delete downloaded/generated files after
+            os.remove(download_path+".webm")
+            os.remove(download_path+".mp4")
+        else:
+            #print("error when converting")
+            os.remove(download_path+".webm")
+
 # When a message is sent in a private message
 def on_message(client, message):
     # bot commands
@@ -53,18 +74,28 @@ def on_message(client, message):
 
 # Startup checks
 print(Fore.YELLOW + "Performing startup checks" + Style.RESET_ALL)
+# check
 print("\tChecking for ffmpeg in PATH...")
 if shutil.which("ffmpeg") is not None:
     print("\tFFmpeg found")
 else:
     print("\tFFmpeg not found!")
     raise Exception(Fore.RED + "FFmpeg could not be located in your path" + Style.RESET_ALL)
+# check
 print("\tChecking for execute permissions for gif2mp4.sh")
 if os.access(os.path.join(PROJECT_DIRECTORY, "gif2mp4.sh"), os.X_OK):
     print("\tFile permissions ok")
 else:
     print("Won\'t be able to execute gif2mp4.sh. Try: chmod u+x gif2mp4.sh")
     raise Exception(Fore.RED + "gif2mp4.sh cannot be executed, change the file permissions" + Style.RESET_ALL)
+# check
+print("\tChecking for execute permissions for webm2mp4.sh")
+if os.access(os.path.join(PROJECT_DIRECTORY, "webm2mp4.sh"), os.X_OK):
+    print("\tFile permissions ok")
+else:
+    print("Won\'t be able to execute webm2mp4.sh. Try: chmod u+x webm2mp4.sh")
+    raise Exception(Fore.RED + "webm2mp4.sh cannot be executed, change the file permissions" + Style.RESET_ALL)
+# check
 print("\tDeleting contents of `downloads` directory")
 if os.path.isdir(os.path.join(PROJECT_DIRECTORY, "downloads")) is True:
     shutil.rmtree(os.path.join(PROJECT_DIRECTORY, "downloads"))
