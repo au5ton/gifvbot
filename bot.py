@@ -24,18 +24,23 @@ app = Client(
 def on_document(client, message):
     # if the document is a gif and is within an acceptable size
     if message.document.mime_type == "image/gif" and message.document.file_size in range(FILE_SIZE_MINIMUM,FILE_SIZE_MAXIMUM):
+        print("eligbile document")
         # download the document
         download_path = client.download_media(message, message.document.file_id)
+        print("\tdownloaded")
          # pyrogram doesnt add extension, so we must
         os.rename(download_path, download_path+".gif")
         # create the path to the conversion script
         convert_script = os.path.join(PROJECT_DIRECTORY, "gif2mp4.sh")
         # run the conversion script
+        print("\tconversion running")
         status = subprocess.run([convert_script, download_path+".gif", download_path+".mp4"])
         # if the conversion failed or not
         if status.returncode is 0:
             # send the newly created mp4
+            print("\tuploading")
             client.send_video(message.chat.id, download_path+".mp4", reply_to_message_id=message.message_id)
+            print("\tvideo sent")
             # delete downloaded/generated files after
             os.remove(download_path+".gif")
             os.remove(download_path+".mp4")
@@ -45,24 +50,34 @@ def on_document(client, message):
 
     # if the document is a webm and is within an acceptable size
     if (message.document.file_name.lower().endswith(".webm") or message.document.file_name.lower().endswith(".mkv")) and message.document.file_size in range(1,FILE_SIZE_MAXIMUM):
+        print("eligbile document")
+        extension = ""
+        if(message.document.file_name.lower().endswith(".webm")):
+            extension = ".webm"
+        if(message.document.file_name.lower().endswith(".mkv")):
+            extension = ".mkv"
         # download the document
         download_path = client.download_media(message, message.document.file_id)
+        print("\tdownloaded")
          # pyrogram doesnt add extension, so we must
-        os.rename(download_path, download_path+".webm")
+        os.rename(download_path, download_path+extension)
         # create the path to the conversion script
+        print("\tconversion running")
         convert_script = os.path.join(PROJECT_DIRECTORY, "webm2mp4.sh")
         # run the conversion script
-        status = subprocess.run([convert_script, download_path+".webm", download_path+".mp4"])
+        status = subprocess.run([convert_script, download_path+extension, download_path+".mp4"])
         # if the conversion failed or not
         if status.returncode is 0:
             # send the newly created mp4
+            print("\tuploading")
             client.send_video(message.chat.id, download_path+".mp4", reply_to_message_id=message.message_id)
+            print("\tvideo sent")
             # delete downloaded/generated files after
-            os.remove(download_path+".webm")
+            os.remove(download_path+extension)
             os.remove(download_path+".mp4")
         else:
             #print("error when converting")
-            os.remove(download_path+".webm")
+            os.remove(download_path+extension)
 
 # When a message is sent in a private message
 def on_message(client, message):
