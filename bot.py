@@ -24,7 +24,7 @@ app = Client(
 def on_document(client, message):
     # if the document is a gif and is within an acceptable size
     if message.document.mime_type == "image/gif" and message.document.file_size in range(FILE_SIZE_MINIMUM,FILE_SIZE_MAXIMUM):
-        print("eligbile document")
+        print("eligible document")
         # download the document
         download_path = client.download_media(message, message.document.file_id)
         print("\tdownloaded")
@@ -50,7 +50,7 @@ def on_document(client, message):
 
     # if the document is a webm and is within an acceptable size
     if (message.document.file_name.lower().endswith(".webm") or message.document.file_name.lower().endswith(".mkv")) and message.document.file_size in range(1,FILE_SIZE_MAXIMUM):
-        print("eligbile document")
+        print("eligible document")
         extension = ""
         if(message.document.file_name.lower().endswith(".webm")):
             extension = ".webm"
