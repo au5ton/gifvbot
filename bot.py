@@ -10,7 +10,7 @@ load_dotenv(find_dotenv())
 colorama.init()
 
 PROJECT_DIRECTORY = os.path.split(os.path.realpath(__file__))[0]
-FILE_SIZE_MINIMUM = 1 * (10**7) # 1 megabytes
+FILE_SIZE_MINIMUM = 3 * (10**6) # 3 megabytes
 FILE_SIZE_MAXIMUM = 5 * (10**8) # 500 megabytes
 #FILE_SIZE_MAXIMUM = 2 * (10**7) # 20 megabytes
 
@@ -23,12 +23,12 @@ app = Client(
 # When a document is sent
 def on_document(client, message):
     # if the document is a gif and is within an acceptable size
-    if message.document.mime_type == "image/gif" and message.document.file_size in range(FILE_SIZE_MINIMUM,FILE_SIZE_MAXIMUM):
+    if message.document != None and message.document.mime_type == "image/gif" and message.document.file_size in range(FILE_SIZE_MINIMUM,FILE_SIZE_MAXIMUM):
         print("eligible document")
         # download the document
         download_path = client.download_media(message, message.document.file_id)
         print("\tdownloaded")
-         # pyrogram doesnt add extension, so we must
+        # pyrogram doesnt add extension, so we must
         os.rename(download_path, download_path+".gif")
         # create the path to the conversion script
         convert_script = os.path.join(PROJECT_DIRECTORY, "gif2mp4.sh")
@@ -49,7 +49,7 @@ def on_document(client, message):
             os.remove(download_path+".gif")
 
     # if the document is a webm and is within an acceptable size
-    if (message.document.file_name.lower().endswith(".webm") or message.document.file_name.lower().endswith(".mkv")) and message.document.file_size in range(1,FILE_SIZE_MAXIMUM):
+    if message.document != None and (message.document.file_name.lower().endswith(".webm") or message.document.file_name.lower().endswith(".mkv")) and message.document.file_size in range(1,FILE_SIZE_MAXIMUM):
         print("eligible document")
         extension = ""
         if(message.document.file_name.lower().endswith(".webm")):
@@ -59,7 +59,7 @@ def on_document(client, message):
         # download the document
         download_path = client.download_media(message, message.document.file_id)
         print("\tdownloaded")
-         # pyrogram doesnt add extension, so we must
+        # pyrogram doesnt add extension, so we must
         os.rename(download_path, download_path+extension)
         # create the path to the conversion script
         print("\tconversion running")
@@ -79,10 +79,37 @@ def on_document(client, message):
             #print("error when converting")
             os.remove(download_path+extension)
 
+# When an animation is sent
+def on_animation(client, message):
+    if message.animation != None and message.animation.mime_type == "image/gif" and message.animation.file_size in range(FILE_SIZE_MINIMUM,FILE_SIZE_MAXIMUM):
+        print("eligible document")
+        # download the document
+        download_path = client.download_media(message, message.animation.file_id)
+        print("\tdownloaded")
+        # pyrogram doesnt add extension, so we must
+        os.rename(download_path, download_path+".gif")
+        # create the path to the conversion script
+        convert_script = os.path.join(PROJECT_DIRECTORY, "gif2mp4.sh")
+        # run the conversion script
+        print("\tconversion running")
+        status = subprocess.run([convert_script, download_path+".gif", download_path+".mp4"])
+        # if the conversion failed or not
+        if status.returncode is 0:
+            # send the newly created mp4
+            print("\tuploading")
+            client.send_video(message.chat.id, download_path+".mp4", reply_to_message_id=message.message_id)
+            print("\tvideo sent")
+            # delete downloaded/generated files after
+            os.remove(download_path+".gif")
+            os.remove(download_path+".mp4")
+        else:
+            #print("error when converting")
+            os.remove(download_path+".gif")
+
 # When a message is sent in a private message
 def on_message(client, message):
     # bot commands
-    if message.text.startswith("/start"):
+    if message.text != None and message.text.startswith("/start"):
         message.reply("Hello! I automatically convert large gif files to a silent mp4. Simply send your gif file as an attached document and I will reply with a watchable mp4. I work in group chats too.")
         message.reply("I\'m also open source! https://github.com/au5ton/gifvbot")
 
@@ -122,5 +149,6 @@ print("\tCleaned `downloads` directory")
 # if the code has made it here, startup checks have gone ok
 print(Fore.GREEN + "Startup checks complete!" + Style.RESET_ALL)
 app.add_handler(MessageHandler(on_document, Filters.document))
+app.add_handler(MessageHandler(on_animation, Filters.animation))
 app.add_handler(MessageHandler(on_message, Filters.private))
 app.run()
