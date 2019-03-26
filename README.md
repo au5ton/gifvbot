@@ -23,6 +23,7 @@ See [demo video](https://www.youtube.com/watch?v=x7euHeqo64s).
 - `git clone https://github.com/au5ton/gifvbot.git`
 - `pip3 install -r requirements.txt`
 - Make gif2mp4.sh executable: `chmod u+x gif2mp4.sh`
+- Make webm2mp4.sh executable: `chmod u+x webm2mp4.sh`
 - [Register a new Telegram application](https://my.telegram.org/apps)
 - `cp .env.example .env`
 - Supply API ID and API Hash that was provided when registering your Telegram application by editing the `.env` file
